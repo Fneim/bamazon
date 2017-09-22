@@ -11,27 +11,7 @@ var connection = mysql.createConnection({
   database:"bamazon"
 });
 
-//SIGN UP AND LOG IN
-// inquirer.prompt([
-//   {
-//     name:"access",
-//     message:"User, Admin, ?",
-//     choices:["User", "Manager", "Supervisor"],
-//     default:true
-//   }
-// ]).then(function(response){
-//   switch (response.access) {
-//     case "user":
-//     console.log(response.username+ " you're logged in as User.");
-//     break;
-//     case "admin":
-//     console.log(response.username + " you're logged in as Admin")
-//     break;
-//   }
-// })
-
 //display products' id's, names, and prices
-
 showItems();
 
 function showItems(){

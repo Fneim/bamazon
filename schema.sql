@@ -24,5 +24,5 @@ values("The Elder Wand", "Collectibles", 7.00, 78),
 ("Ugly Sweater", "Apparel", 23.80, 231);
 
 update products 
-set stock_quantity = 10
-where item_id = 7;
+set department_name = "Apps & Games"
+where item_id = 4;
