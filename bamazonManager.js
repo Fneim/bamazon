@@ -26,19 +26,15 @@ function menu() {
     var option = response.option;
     switch(option){
       case "View Products On Sale":
-        console.log("works");
         viewProducts();
         break;
       case "View Low Inventory":
-        console.log("also works");
         lowInventory();
         break;
       case "Add to Inventory":
-        console.log("this too works");
         addToInventory();
         break;
       case "Add New Product":
-        console.log("awesome");
         addProduct();
         break;
       default:
@@ -46,8 +42,11 @@ function menu() {
     }
   });
 }
+
+
 var items = [];
 
+//displays all products
 function viewProducts() {
   console.log("\nPRODUCTS ON SALE");
   var query = connection.query("SELECT * FROM products", function(err,res){
@@ -61,10 +60,11 @@ function viewProducts() {
   })
 }
 
+//displays products with low inventory
 function lowInventory() {
   var lowInventory = [];
-  console.log("\nON SALE");
-  var query = connection.query("SELECT * FROM products", function(err,res){
+  console.log("\nIF NO DISPLAY - AT MAX CAPACITY");
+  connection.query("SELECT * FROM products", function(err,res){
     if(err) throw err;
     console.log("");
     for(var i = 0; i < res.length; i++){
@@ -78,24 +78,25 @@ function lowInventory() {
         });
       }
     }
-    console.table(items);
-  })
+});
+console.table(items);
 }
 
+//increases inventory of products
 function addToInventory() {
+  var ids = [];
   connection.query("SELECT * FROM products", function(err, res){
     console.log("");
     for(var i = 0; i < res.length; i++){
-      if(res[i].stock_quantity < 5) {
-        items.push({
-          id: res[i].item_id,
-          name: res[i].product_name,
-          department: res[i].department_name,
-          price: res[i].price,
-          quantity: res[i].stock_quantity
-        });
-      }
-    }
+      items.push({
+        id: res[i].item_id,
+        name: res[i].product_name,
+        department: res[i].department_name,
+        price: res[i].price,
+        quantity: res[i].stock_quantity
+      });
+
+    } //end of for loop
     console.table(items);
     inquirer.prompt([
       {
@@ -105,14 +106,43 @@ function addToInventory() {
       {
         name:"quantity",
         message:"Enter Quantity to Add: "
-      }.then(function(response){
-        
-      })
-    ])
-    })
+      }
+    ]).then(function(response){
+      var id = response.product;
+      var quantity = response.quantity;
+      connection.query(
+        "SELECT stock_quantity FROM products WHERE ?",
+        {
+          item_id:id
+        }, function(err, res){
+          var newQuantity = parseInt(quantity,10) + parseInt(res[0].stock_quantity,10);
+          console.log(newQuantity);
+          updateStock(id, quantity, newQuantity);
+        }
+      )
+    }) //end of inquirer prompt
   })
 }
 
+//updates stock quantity in inventory
+function updateStock(id, quantity, newQuantity) {
+  connection.query(
+    "UPDATE products SET ? WHERE ?",
+      [
+        {
+        stock_quantity:newQuantity
+      },
+      {
+        item_id:id
+      }
+    ],
+      function(err, res) {
+        console.log("Increased inventory by " + quantity + " for ITEM ID " + id);
+    }
+  );
+}
+
+//Adds new product to bamazon
 function addProduct() {
   console.log("ADD NEW PRODUCT");
   inquirer.prompt([

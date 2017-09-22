@@ -25,4 +25,4 @@ values("The Elder Wand", "Collectibles", 7.00, 78),
 
 update products 
 set department_name = "Apps & Games"
-where item_id = 4;
+where item_id = 5;
